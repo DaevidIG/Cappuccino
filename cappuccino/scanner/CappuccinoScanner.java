@@ -241,7 +241,7 @@ public class CappuccinoScanner {
 
 	public void getNextToken() {
 		if (this.position >= this.target.length) {
-			if (this.currentToken != EOIF) this.currentToken = EOIF;
+			this.currentToken = EOIF;
 			return;
 		}
 
@@ -252,7 +252,7 @@ public class CappuccinoScanner {
 					this.column = 1;
 				}
 				this.position++;
-			} while (this.target[this.position] == ' ' || this.target[this.position] == '\r' || this.target[this.position] == '\t' || this.target[this.position] == '\f' || this.target[this.position] == '\b' || this.target[this.position] == '\n');
+			} while (this.position < this.target.length && (this.target[this.position] == ' ' || this.target[this.position] == '\r' || this.target[this.position] == '\t' || this.target[this.position] == '\f' || this.target[this.position] == '\b' || this.target[this.position] == '\n'));
 		}
 
 		if ((this.target[this.position] >= 'a' && this.target[this.position] <= 'z') || (this.target[this.position] >= 'A' && this.target[this.position] <= 'Z')) {
