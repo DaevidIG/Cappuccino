@@ -1,18 +1,18 @@
-# Cappuccino Options
+# Cappuccino
 
-**Cappuccino Options** is a robust expression language designed for high-precision arithmetic and strict type safety. It empowers developers to perform complex numerical calculations with absolute control over data types and accuracy, eliminating common pitfalls like floating-point errors and implicit casting surprises.
+**Cappuccino** is a robust expression language designed for high-precision arithmetic and strict type safety. It empowers developers to perform complex numerical calculations with absolute control over data types and accuracy, eliminating common pitfalls like floating-point errors and implicit casting surprises.
 
 ## Key Capabilities
 
-### 🛡️ Strict Type Safety
-Cappuccino Options prioritizes correctness. It does not allow implicit type coercion.
+### Strict Type Safety
+Cappuccino prioritizes correctness. It does not allow implicit type coercion.
 - **No Implicit Casting**: You cannot accidentally add an Integer to a Float. Operations must be between compatible types or explicitly handled.
 - **Range Validation**: Every operation is checked against the target type's range. If a calculation overflows a `Byte` (-128 to 127), the system immediately reports a range error, preventing silent data corruption.
 
-### 🎯 High Precision Arithmetic
+### High Precision Arithmetic
 Say goodbye to floating-point inaccuracies.
-- **Decimal Precision**: All floating-point operations use arbitrary-precision arithmetic (similar to `BigDecimal`), ensuring that `0.1 + 0.2` equals exactly `0.3`.
-- **Integer Precision**: Integer operations use arbitrary-precision integers (similar to `BigInteger`), allowing for calculations that exceed standard 64-bit limits.
+- **Decimal Precision**: All floating-point operations use arbitrary-precision arithmetic, ensuring that `0.1 + 0.2` equals exactly `0.3`.
+- **Integer Precision**: Integer operations use arbitrary-precision integers, allowing for calculations that exceed standard 64-bit limits.
 
 ## Supported Features
 
@@ -30,7 +30,7 @@ The language supports a wide array of numeric types, each selectable via a case-
 | **Number** | `n` / `N` | Generic number | `42n` |
 
 ### 2. Number Formats
-Cappuccino Options understands that numbers come in many forms. It natively supports:
+Cappuccino understands that numbers come in many forms. It natively supports:
 - **Decimal**: `123`, `12.34`
 - **Hexadecimal**: `0xFF`, `0x1.A` (supports fractional hex)
 - **Octal**: `0o755`
@@ -43,47 +43,31 @@ Beyond simple numbers, the language supports complex type structures for sophist
 - **Union Types**: Define a value that can be one of multiple types.
   ```typescript
   // A value that can be either an Integer or a Float
-  let value: Integer | Float = 10i;
+  let value: integer | float = 10i;
   ```
 
 - **Tuple Types**: Group multiple values together with strict typing.
   ```typescript
   // A tuple containing an Integer and a Float
-  let coordinate: [Integer, Float] = [10i, 20.5f];
+  let coordinate: [integer, float] = [10i, 20.5f];
   ```
-
-### 4. Arithmetic Operations
-Full support for standard mathematical operations with operator precedence:
-- Addition (`+`)
-- Subtraction (`-`)
-- Multiplication (`*`)
-- Division (`/`) - Precision-aware
-- Modulus (`%`)
-- Grouping with Parentheses `()`
 
 ## Getting Started
 
 ### Prerequisites
-- Java Development Kit (JDK) 17 or higher.
+- Java Development Kit (JDK) 25.
 
-### Running the Project
-1. **Compile**:
+### Download the project
+1. **Unpack Zip**:<br>
+    Unpack the ".zip" file you downloaded, enter the folder that was created when you unpacked it, open a terminal, and run the following command.
+
+2. **Permission**:
    ```bash
-   javac -d out -sourcepath . CappuccinoStarter.java
+   # in Windows (Git Bash), Linux & MacOs.
+   chmod -x "Cappuccino Installation.sh"
    ```
 
-2. **Run**:
+3. **Run**:
    ```bash
-   java -cp out CappuccinoStarter
+   ./"Cappuccino Installation.sh"
    ```
-
-### Example Code
-```java
-// Define a scanner with an expression
-CappuccinoScanner scanner = new CappuccinoScanner("0x1A + 5i");
-
-// Parse and Interpret
-CappuccinoParser parser = new CappuccinoParser(scanner);
-CappuccinoInterpreter interpreter = new CappuccinoInterpreter(parser.parse());
-interpreter.interpreter();
-```
