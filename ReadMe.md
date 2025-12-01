@@ -1,95 +1,89 @@
 # Cappuccino Options
 
-**Cappuccino Options** is a custom expression language interpreter written in Java. It supports various numeric types, arithmetic operations, and strict type checking, allowing for precise control over numerical calculations.
+**Cappuccino Options** is a robust expression language designed for high-precision arithmetic and strict type safety. It empowers developers to perform complex numerical calculations with absolute control over data types and accuracy, eliminating common pitfalls like floating-point errors and implicit casting surprises.
 
-## Features
+## Key Capabilities
 
-### 1. Arithmetic Operations
-Cappuccino supports standard arithmetic operations:
-- **Addition (`+`)**
-- **Subtraction (`-`)**
-- **Multiplication (`*`)**
-- **Division (`/`)**: Performs integer division for integers and precision division for decimals.
-- **Modulus (`%`)**
-- **Grouping**: Parentheses `()` can be used to control the order of operations.
+### 🛡️ Strict Type Safety
+Cappuccino Options prioritizes correctness. It does not allow implicit type coercion.
+- **No Implicit Casting**: You cannot accidentally add an Integer to a Float. Operations must be between compatible types or explicitly handled.
+- **Range Validation**: Every operation is checked against the target type's range. If a calculation overflows a `Byte` (-128 to 127), the system immediately reports a range error, preventing silent data corruption.
 
-### 2. Numeric Types & Literals
-The language supports multiple numeric types, each identified by a specific suffix (case-insensitive):
+### 🎯 High Precision Arithmetic
+Say goodbye to floating-point inaccuracies.
+- **Decimal Precision**: All floating-point operations use arbitrary-precision arithmetic (similar to `BigDecimal`), ensuring that `0.1 + 0.2` equals exactly `0.3`.
+- **Integer Precision**: Integer operations use arbitrary-precision integers (similar to `BigInteger`), allowing for calculations that exceed standard 64-bit limits.
 
-| Type | Suffix | Example | Description |
+## Supported Features
+
+### 1. Numeric Types
+The language supports a wide array of numeric types, each selectable via a case-insensitive suffix.
+
+| Type | Suffix | Description | Example |
 | :--- | :---: | :--- | :--- |
-| **Byte** | `b` or `B` | `125b` | 8-bit signed integer |
-| **Short** | `s` or `S` | `32000s` | 16-bit signed integer |
-| **Integer** | `i` or `I` | `100i` | 32-bit signed integer |
-| **Long** | `l` or `L` | `5000l` | 64-bit signed integer |
-| **Float** | `f` or `F` | `3.14f` | 32-bit floating point |
-| **Double** | `d` or `D` | `10.5d` | 64-bit floating point |
-| **Number** | `n` or `N` | `42n` | Generic number type |
+| **Byte** | `b` / `B` | 8-bit signed integer | `127b` |
+| **Short** | `s` / `S` | 16-bit signed integer | `32000s` |
+| **Integer** | `i` / `I` | 32-bit signed integer | `100i` |
+| **Long** | `l` / `L` | 64-bit signed integer | `9000l` |
+| **Float** | `f` / `F` | High-precision decimal | `3.14f` |
+| **Double** | `d` / `D` | High-precision decimal | `10.5d` |
+| **Number** | `n` / `N` | Generic number | `42n` |
 
-*Note: If no suffix is provided, the interpreter treats the number as a generic `DigitLiteralToken`.*
+### 2. Number Formats
+Cappuccino Options understands that numbers come in many forms. It natively supports:
+- **Decimal**: `123`, `12.34`
+- **Hexadecimal**: `0xFF`, `0x1.A` (supports fractional hex)
+- **Octal**: `0o755`
+- **Binary**: `0b1011`
+- **Scientific Notation**: `1.5e3`, `2.4E-5`
 
-### 3. Type Safety & Mixing Rules
-Cappuccino enforces strict rules when mixing different numeric types in operations to prevent unintended precision loss or overflow.
+### 3. Advanced Type System
+Beyond simple numbers, the language supports complex type structures for sophisticated data modeling:
 
-- **Decimal Operations**: If both operands are `BigDecimal` (e.g., Float, Double), the result is calculated with high precision.
-- **Integer Operations**: If both operands are `BigInteger` (e.g., Byte, Short, Integer, Long), the result is an integer.
-- **Mixed Operations**: Mixing "Decimal" types with "Integer" types (e.g., adding a `Float` to an `Integer`) will result in an error:
-  > `Cannot evaluate an decimal operation with an integer operation`
+- **Union Types**: Define a value that can be one of multiple types.
+  ```typescript
+  // A value that can be either an Integer or a Float
+  let value: Integer | Float = 10i;
+  ```
 
-- **Homogeneous Type Checks**: The interpreter checks if you are mixing different specific types (e.g., adding a `Byte` to a `Short`) and may report errors like:
-  - `Byte mix`
-  - `Short mix`
-  - `Integer mix`
-  - `Float mix`
-  - `Double mix`
+- **Tuple Types**: Group multiple values together with strict typing.
+  ```typescript
+  // A tuple containing an Integer and a Float
+  let coordinate: [Integer, Float] = [10i, 20.5f];
+  ```
 
-### 4. Range Checking
-The interpreter validates that literals fit within their respective type ranges (e.g., a `Byte` must be between -128 and 127). If a value exceeds its range, an error is reported (e.g., `Byte range`).
+### 4. Arithmetic Operations
+Full support for standard mathematical operations with operator precedence:
+- Addition (`+`)
+- Subtraction (`-`)
+- Multiplication (`*`)
+- Division (`/`) - Precision-aware
+- Modulus (`%`)
+- Grouping with Parentheses `()`
 
-## Installation & Usage
+## Getting Started
 
 ### Prerequisites
 - Java Development Kit (JDK) 17 or higher.
 
 ### Running the Project
-The entry point is `CappuccinoStarter.java`. You can run it using your IDE or from the command line.
-
-#### Command Line
-1. **Navigate to the project root directory**:
-   ```bash
-   cd "Cappuccino Options"
-   ```
-
-2. **Compile the code**:
+1. **Compile**:
    ```bash
    javac -d out -sourcepath . CappuccinoStarter.java
    ```
 
-3. **Run the interpreter**:
+2. **Run**:
    ```bash
    java -cp out CappuccinoStarter
    ```
 
-### Example Usage
-In `CappuccinoStarter.java`, you can define an expression to evaluate:
-
+### Example Code
 ```java
-CappuccinoScanner cappuccinoScanner = new CappuccinoScanner("-125b + -3b");
-CappuccinoParser cappuccinoParser = new CappuccinoParser(cappuccinoScanner);
-CappuccinoProgramNode cappuccinoNode = cappuccinoParser.parse();
-CappuccinoInterpreter cappuccinoInterpreter = new CappuccinoInterpreter(cappuccinoNode);
-cappuccinoInterpreter.interpreter();
-```
+// Define a scanner with an expression
+CappuccinoScanner scanner = new CappuccinoScanner("0x1A + 5i");
 
-**Output:**
+// Parse and Interpret
+CappuccinoParser parser = new CappuccinoParser(scanner);
+CappuccinoInterpreter interpreter = new CappuccinoInterpreter(parser.parse());
+interpreter.interpreter();
 ```
--128
-Time in: ...ns
-```
-
-## Project Structure
-- **`cappuccino.scanner`**: Tokenizes the input string.
-- **`cappuccino.parser`**: Parses tokens into an Abstract Syntax Tree (AST).
-- **`cappuccino.nodes`**: Defines the AST nodes.
-- **`cappuccino.interpreter`**: Evaluates the AST.
-- **`cappuccino.utils`**: Utility classes for type checking and error reporting.
