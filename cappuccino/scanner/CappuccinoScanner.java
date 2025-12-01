@@ -99,8 +99,11 @@ public class CappuccinoScanner {
 
 		return new Token(
 				identifier, switch (identifier) {
+					case "false" -> FalseLiteralToken;
+					case "indeterminate" -> IndeterminateLiteralToken;
 					case "let" -> LetKeywordToken;
 					case "neutral" -> NeutralLiteralKeywordToken;
+					case "true" -> TrueLiteralToken;
 					default -> IdentifierToken;
 				}, this.line, new int[] { startPost, this.position }
 		);
