@@ -1,5 +1,9 @@
 package cappuccino.scanner;
 
+import java.io.*;
+import java.nio.*;
+import java.nio.channels.*;
+import java.nio.charset.*;
 import java.util.HashMap;
 
 import cappuccino.Cappuccino;
@@ -57,6 +61,30 @@ public class CappuccinoScanner {
 		this.line = 1;
 		this.column = 1;
 		this.currentToken = SOIF;
+	}
+
+	public CappuccinoScanner(File file) {
+		this.target = this.readFile(file);
+		this.position = 0;
+		this.line = 1;
+		this.column = 1;
+		this.currentToken = SOIF;
+	}
+
+	private char[] readFile(File file) {
+		try (FileInputStream fis = new FileInputStream(file)) {
+			FileChannel channel = fis.getChannel();
+			MappedByteBuffer buffer = channel.map(FileChannel.MapMode.READ_ONLY, 0, channel.size());
+
+			Charset charset = StandardCharsets.UTF_8;
+			CharBuffer charBuffer = charset.decode(buffer);
+
+			char[] result = new char[charBuffer.remaining()];
+			charBuffer.get(result);
+			return result;
+		} catch (IOException e) {
+			return new char[0];
+		}
 	}
 
 	private Token getIdentifier$KeywordToken() {
