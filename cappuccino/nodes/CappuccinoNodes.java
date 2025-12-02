@@ -20,6 +20,9 @@ public class CappuccinoNodes {
 	public record CappuccinoVariableStatement(String name, CappuccinoTypeNode type, CappuccinoLiteralNode expression)
 			implements CappuccinoStatementNode {}
 
+	public record CappuccinoReferenceNode(Token value)
+			implements CappuccinoLiteralExpressionNode {}
+
 	public interface CappuccinoTypeNode
 			extends CappuccinoNode {}
 

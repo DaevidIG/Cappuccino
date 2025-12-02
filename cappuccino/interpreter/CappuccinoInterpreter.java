@@ -4,6 +4,7 @@ import cappuccino.Cappuccino;
 import cappuccino.nodes.CappuccinoNodes;
 import cappuccino.scanner.Token;
 import cappuccino.nodes.CappuccinoNodes.*;
+import cappuccino.utils.VariableTable;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -36,7 +37,7 @@ public class CappuccinoInterpreter {
 
 			case CappuccinoVariableStatement(String name, CappuccinoTypeNode type, CappuccinoLiteralNode expression) -> {
 				checkerAll(type, expression);
-
+				VariableTable.statement.put(name, (CappuccinoVariableStatement) node);
 			}
 
 			default -> { }
@@ -73,7 +74,7 @@ public class CappuccinoInterpreter {
 
 			Token token = getFirstToken(unions.getFirst());
 			if (indexError == unions.size()) {
-				Cappuccino.printError(2, 0, 0, token.line(), token.column(), "Incomplete");
+				Cappuccino.printError(2, 0, 0, token.line(), "Incomplete");
 			}
 			return;
 		} else if (type instanceof CappuccinoTupleTypeNode || expression instanceof CappuccinoTupleLiteralNode) {
@@ -81,15 +82,16 @@ public class CappuccinoInterpreter {
 		}
 
 		if (((CappuccinoLiteralExpressionNode) expression).value().type() != UndefinedLiteralToken) {
-			Number number = this.evaluateNumeric((CappuccinoLiteralExpressionNode) expression);
+			Number number = evaluateNumeric((CappuccinoLiteralExpressionNode) expression);
 			checkerRange(number, (CappuccinoLiteralExpressionNode) expression);
 			checkerType(type, number, (CappuccinoLiteralExpressionNode) expression);
 			reset();
 		}
 	}
 
-	private Number evaluateNumeric(CappuccinoLiteralExpressionNode expr) {
+	public static Number evaluateNumeric(CappuccinoLiteralExpressionNode expr) {
 		return switch (expr) {
+			case CappuccinoReferenceNode r -> evaluateNumeric((CappuccinoLiteralExpressionNode) VariableTable.statement.get(r.value().value()).expression());
 
 			case CappuccinoNumberLiteralExpressionNode c -> checker(c);
 
@@ -120,22 +122,22 @@ public class CappuccinoInterpreter {
 		};
 	}
 
-	private Number operate(Token op, Number l, Number r) {
+	public static Number operate(Token op, Number l, Number r) {
 
 		int isDecimal = (l instanceof BigDecimal) && (r instanceof BigDecimal) ? 1 : ((l instanceof BigInteger) && (r instanceof BigInteger) ? 2 : 0);
 
 		if (NumberChecker > 0 && (ByteChecker != 0 || ShortChecker != 0 || IntegerChecker != 0 || FloatChecker != 0 || DoubleChecker != 0)) {
-			Cappuccino.printError(2, 0, 0, op.line(), op.column(), "Number mix");
+			Cappuccino.printError(2, 0, 0, op.line(), "Number mix");
 		} else if (ByteChecker > 0 && (ShortChecker != 0 || IntegerChecker != 0 || FloatChecker != 0 || DoubleChecker != 0)) {
-			Cappuccino.printError(2, 0, 0, op.line(), op.column(), "Byte mix");
+			Cappuccino.printError(2, 0, 0, op.line(), "Byte mix");
 		} else if (ShortChecker > 0 && (ByteChecker != 0 || IntegerChecker != 0 || FloatChecker != 0 || DoubleChecker != 0)) {
-			Cappuccino.printError(2, 0, 0, op.line(), op.column(), "Short mix");
+			Cappuccino.printError(2, 0, 0, op.line(), "Short mix");
 		} else if (IntegerChecker > 0 && (ByteChecker != 0 || ShortChecker != 0 || FloatChecker != 0 || DoubleChecker != 0)) {
-			Cappuccino.printError(2, 0, 0, op.line(), op.column(), "Integer mix");
+			Cappuccino.printError(2, 0, 0, op.line(), "Integer mix");
 		} else if (FloatChecker > 0 && (ByteChecker != 0 || ShortChecker != 0 || IntegerChecker != 0 || DoubleChecker != 0)) {
-			Cappuccino.printError(2, 0, 0, op.line(), op.column(), "Float mix");
+			Cappuccino.printError(2, 0, 0, op.line(), "Float mix");
 		} else if (DoubleChecker > 0 && (ByteChecker != 0 || ShortChecker != 0 || IntegerChecker != 0 || FloatChecker != 0)) {
-			Cappuccino.printError(2, 0, 0, op.line(), op.column(), "Double mix");
+			Cappuccino.printError(2, 0, 0, op.line(), "Double mix");
 		}
 
 		switch (isDecimal) {
@@ -169,7 +171,7 @@ public class CappuccinoInterpreter {
 			}
 			default -> {
 
-				Cappuccino.printError(2, 0, 0, op.line(), op.column(), "Cannot evaluate an decimal operation with an integer operation");
+				Cappuccino.printError(2, 0, 0, op.line(), "Cannot evaluate an decimal operation with an integer operation");
 				return 0;
 			}
 		}

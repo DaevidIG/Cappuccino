@@ -11,8 +11,8 @@ import cappuccino.Cappuccino;
 import static cappuccino.scanner.TokenType.*;
 
 public class CappuccinoScanner {
-	public static final Token EOIF = new Token("\0", TokenType.EndOfInputFileToken, 1, new int[] { -1, 0 });
-	public static final Token SOIF = new Token("\1", TokenType.SOIF, -1, new int[] { -1, -1 });
+	public static final Token EOIF = new Token("\0", TokenType.EndOfInputFileToken, 1);
+	public static final Token SOIF = new Token("\1", TokenType.SOIF, -1);
 
 	private static final HashMap<Character, TokenType> symbols = new HashMap<>() {{
 		put('(', ParenthesisLeftSymbolDelimiterSeparatorOperatorToken);
@@ -43,7 +43,6 @@ public class CappuccinoScanner {
 
 	private int position;
 	private int line;
-	private int column;
 	
 	private Token currentToken = SOIF;
 
@@ -51,7 +50,6 @@ public class CappuccinoScanner {
 		this.target = target;
 		this.position = 0;
 		this.line = 1;
-		this.column = 1;
 		this.currentToken = SOIF;
 	}
 
@@ -59,7 +57,6 @@ public class CappuccinoScanner {
 		this.target = target.toCharArray();
 		this.position = 0;
 		this.line = 1;
-		this.column = 1;
 		this.currentToken = SOIF;
 	}
 
@@ -67,7 +64,6 @@ public class CappuccinoScanner {
 		this.target = this.readFile(file);
 		this.position = 0;
 		this.line = 1;
-		this.column = 1;
 		this.currentToken = SOIF;
 	}
 
@@ -92,7 +88,6 @@ public class CappuccinoScanner {
 
 		while ((this.position < this.target.length) && ((this.target[this.position] >= 'a' && this.target[this.position] <= 'z') || (this.target[this.position] >= 'A' && this.target[this.position] <= 'Z') || (this.target[this.position] >= '0' && this.target[this.position] <= '9') || (this.target[this.position] == '_') || (this.target[this.position] == '$'))) {
 			this.position++;
-			this.column++;
 		}
 
 		String identifier = new String(this.target, startPost, this.position - startPost);
@@ -105,7 +100,7 @@ public class CappuccinoScanner {
 					case "neutral" -> NeutralLiteralKeywordToken;
 					case "true" -> TrueLiteralToken;
 					default -> IdentifierToken;
-				}, this.line, new int[] { startPost, this.position }
+				}, this.line
 		);
 	}
 
@@ -115,46 +110,41 @@ public class CappuccinoScanner {
 
 		do {
 			this.position++;
-			this.column++;
 		} while ((this.position < this.target.length) && ((this.target[this.position] >= '0' && this.target[this.position] <= '9') || this.target[this.position] == '_'));
 
 		if (this.position < this.target.length) {
 			if (this.target[this.position] == '.') {
 				do {
 					this.position++;
-					this.column++;
 				} while ((this.position < this.target.length) && ((this.target[this.position] >= '0' && this.target[this.position] <= '9') || this.target[this.position] == '_'));
 				isDecimalPoint = true;
 			}
 
 			if (this.target[this.position] == 'e' || this.target[this.position] == 'E') {
 				this.position++;
-				this.column++;
 
 				if (this.target[this.position] == '+' || this.target[this.position] == '-') {
 					this.position++;
-					this.column++;
 				}
 
 				while ((this.position < this.target.length) && ((this.target[this.position] >= '0' && this.target[this.position] <= '9') || this.target[this.position] == '_')) {
 					this.position++;
-					this.column++;
 				}
 			}
 		}
 
 		if (this.position < this.target.length) {
 			switch (this.target[this.position]) {
-				case 'b', 'B' -> { if (!isDecimalPoint) return new Token(new String(this.target, startPost, ++this.position - startPost), ByteLiteralToken, this.line, new int[] { this.column - (this.position - startPost), this.column }); }
-				case 's', 'S' -> { if (!isDecimalPoint) return new Token(new String(this.target, startPost, ++this.position - startPost), ShortLiteralToken, this.line, new int[] { this.column - (this.position - startPost), this.column }); }
-				case 'i', 'I' -> { if (!isDecimalPoint) return new Token(new String(this.target, startPost, ++this.position - startPost), IntegerLiteralToken, this.line, new int[] { this.column - (this.position - startPost), this.column }); }
-				case 'l', 'L' -> { if (!isDecimalPoint) return new Token(new String(this.target, startPost, ++this.position - startPost), LongLiteralToken, this.line, new int[] { this.column - (this.position - startPost), this.column }); }
-				case 'f', 'F' -> { return new Token(new String(this.target, startPost, ++this.position - startPost), FloatLiteralToken, this.line, new int[] { this.column - (this.position - startPost), this.column }); }
-				case 'd', 'D' -> { return new Token(new String(this.target, startPost, ++this.position - startPost), DoubleLiteralToken, this.line, new int[] { this.column - (this.position - startPost), this.column }); }
-				case 'n', 'N' -> { return new Token(new String(this.target, startPost, ++this.position - startPost), NumberLiteralToken, this.line, new int[] { this.column - (this.position - startPost), this.column }); }
+				case 'b', 'B' -> { if (!isDecimalPoint) return new Token(new String(this.target, startPost, ++this.position - startPost), ByteLiteralToken, this.line); }
+				case 's', 'S' -> { if (!isDecimalPoint) return new Token(new String(this.target, startPost, ++this.position - startPost), ShortLiteralToken, this.line); }
+				case 'i', 'I' -> { if (!isDecimalPoint) return new Token(new String(this.target, startPost, ++this.position - startPost), IntegerLiteralToken, this.line); }
+				case 'l', 'L' -> { if (!isDecimalPoint) return new Token(new String(this.target, startPost, ++this.position - startPost), LongLiteralToken, this.line); }
+				case 'f', 'F' -> { return new Token(new String(this.target, startPost, ++this.position - startPost), FloatLiteralToken, this.line); }
+				case 'd', 'D' -> { return new Token(new String(this.target, startPost, ++this.position - startPost), DoubleLiteralToken, this.line); }
+				case 'n', 'N' -> { return new Token(new String(this.target, startPost, ++this.position - startPost), NumberLiteralToken, this.line); }
 			}
 		}
-		return new Token(new String(this.target, startPost, this.position - startPost), DigitLiteralToken, this.line, new int[] { this.column - (this.position - startPost), this.column });
+		return new Token(new String(this.target, startPost, this.position - startPost), DigitLiteralToken, this.line);
 	}
 
 	private Token getNotationScientificToken() {
@@ -193,7 +183,7 @@ public class CappuccinoScanner {
 					} while (this.position < this.target.length && ((this.target[this.position] >= '0' && this.target[this.position] <= '9') || (this.target[this.position] >= 'a' && this.target[this.position] <= 'f') || (this.target[this.position] >= 'A' && this.target[this.position] <= 'F')));
 				}
 
-				return new Token(new String(this.target, startPost, this.position - startPost), type, this.line, new int[] { this.column - (this.position - startPost), this.column });
+				return new Token(new String(this.target, startPost, this.position - startPost), type, this.line);
 			} else if (this.target[this.position] == 'o' || this.target[this.position] == 'O') {
 				do {
 					this.position++;
@@ -211,7 +201,7 @@ public class CappuccinoScanner {
 					} while (this.position < this.target.length && ((this.target[this.position] >= '0' && this.target[this.position] <= '7')));
 				}
 
-				return new Token(new String(this.target, startPost, this.position - startPost), type, this.line, new int[] { this.column - (this.position - startPost), this.column });
+				return new Token(new String(this.target, startPost, this.position - startPost), type, this.line);
 			} else if (type == ByteLiteralToken) {
 				if (this.target[this.position] == 'b' || this.target[this.position] == 'B') {
 					this.position++;
@@ -235,11 +225,11 @@ public class CappuccinoScanner {
 					} while (this.position < this.target.length && ((this.target[this.position] == '0') || (this.target[this.position] == '1')));
 				}
 
-				return new Token(new String(this.target, startPost, this.position - startPost), type, this.line, new int[] { this.column - (this.position - startPost), this.column });
+				return new Token(new String(this.target, startPost, this.position - startPost), type, this.line);
 			}
 		}
 
-		return new Token("0", NeutralLiteralKeywordToken, this.line, new int[] { this.column - (this.position - startPost), this.column });
+		return new Token("0", NeutralLiteralKeywordToken, this.line);
 	}
 
 	public void getNextToken() {
@@ -252,7 +242,6 @@ public class CappuccinoScanner {
 			do {
 				if (this.target[this.position] == '\n') {
 					this.line++;
-					this.column = 1;
 				}
 				this.position++;
 			} while (this.position < this.target.length && (this.target[this.position] == ' ' || this.target[this.position] == '\r' || this.target[this.position] == '\t' || this.target[this.position] == '\f' || this.target[this.position] == '\b' || this.target[this.position] == '\n'));
@@ -268,13 +257,12 @@ public class CappuccinoScanner {
 			this.currentToken = this.getNotationScientificToken();
 			return;
 		} else if (CappuccinoScanner.symbols.containsKey(this.target[this.position])) {
-			this.currentToken = new Token(String.valueOf(this.target[this.position]), CappuccinoScanner.symbols.get(this.target[this.position]), this.line, new int[] { this.column, this.column + 1 });
+			this.currentToken = new Token(String.valueOf(this.target[this.position]), CappuccinoScanner.symbols.get(this.target[this.position]), this.line);
 			this.position++;
-			this.column++;
 			return;
 		}
 
-		Cappuccino.printError(/* section */0, /* error */0, /* subError */0, this.line, new int [] { this.column, this.column + 1 }, "Could not find a suitable place for character: '" + this.target[this.position] + "';");
+		Cappuccino.printError(/* section */0, /* error */0, /* subError */0, this.line, "Could not find a suitable place for character: '" + this.target[this.position] + "';");
 	}
 
 	public Token getCurrentToken() {

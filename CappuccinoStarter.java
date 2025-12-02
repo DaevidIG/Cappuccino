@@ -2,6 +2,7 @@ import cappuccino.interpreter.CappuccinoInterpreter;
 import cappuccino.scanner.CappuccinoScanner;
 import cappuccino.parser.CappuccinoParser;
 import cappuccino.nodes.CappuccinoNodes.*;
+import cappuccino.utils.VariableTable;
 
 import java.nio.file.Paths;
 

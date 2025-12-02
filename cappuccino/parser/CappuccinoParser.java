@@ -59,10 +59,7 @@ public class CappuccinoParser {
 			expressionNode = new CappuccinoLiteralExpressionNode() {
 				@Override
 				public Token value() {
-					return new Token("undefined", UndefinedLiteralToken, 1, new int[] {
-							0,
-							9,
-					});
+					return new Token("undefined", UndefinedLiteralToken, -1);
 				}
 			};
 		}
@@ -164,12 +161,14 @@ public class CappuccinoParser {
 	}
 
 	private CappuccinoLiteralExpressionNode parseNumberLiteralNode() {
-		Token token = (Token) this.validator(CURRENT | CONSUME | NEXT, NumberLiteralToken, ByteLiteralToken, ShortLiteralToken, IntegerLiteralToken, FloatLiteralToken, DoubleLiteralToken, ParenthesisLeftSymbolDelimiterSeparatorOperatorToken);
+		Token token = (Token) this.validator(CURRENT | CONSUME | NEXT, NumberLiteralToken, ByteLiteralToken, ShortLiteralToken, IntegerLiteralToken, FloatLiteralToken, DoubleLiteralToken, ParenthesisLeftSymbolDelimiterSeparatorOperatorToken, IdentifierToken);
 
 		if (token.type() == ParenthesisLeftSymbolDelimiterSeparatorOperatorToken) {
 			CappuccinoLiteralExpressionNode node = this.parseBinaryExpressionNode();
 			this.validator(CURRENT | CONSUME | NEXT, ParenthesisRightSymbolDelimiterSeparatorOperatorToken);
 			return node;
+		} else if (token.type() == IdentifierToken) {
+			return new CappuccinoReferenceNode(token);
 		}
 
 		return new CappuccinoNumberLiteralExpressionNode(token);
@@ -195,7 +194,7 @@ public class CappuccinoParser {
 		Token token;
 
 		if (!isCurrent) {
-			Cappuccino.printError(/* section */1, /* error */0, /* subError */1, this.scanner.getCurrentToken().line(), this.scanner.getCurrentToken().column(), "Flag Mask Missing (Error): Missing the Flag Mask 'Current' for get the Token, Otherwise nothing can be done.");
+			Cappuccino.printError(/* section */1, /* error */0, /* subError */1, this.scanner.getCurrentToken().line(), "Flag Mask Missing (Error): Missing the Flag Mask 'Current' for get the Token, Otherwise nothing can be done.");
 		}
 
 		token = this.scanner.getCurrentToken();
@@ -222,7 +221,7 @@ public class CappuccinoParser {
 						return token;
 					}
 				}
-				Cappuccino.printError(/* section */1, /* error */0, /* subError */1, token.line(), token.column(), "The type '" + token.type() + "' does bit exactly match the '" + this.buildError(types) + "'");
+				Cappuccino.printError(/* section */1, /* error */0, /* subError */1, token.line(), "The type '" + token.type() + "' does bit exactly match the '" + this.buildError(types) + "'");
 			}
 
 			if (isPeek) {

@@ -45,8 +45,8 @@ public class Cappuccino {
         }};
     }
 
-    public static void printError(int section, int error, int subError, int line, int[] column, String message) {
-        System.err.println('(' + Cappuccino.Name + ' ' + Cappuccino.Internal.Sections[section] + ')' + ' ' + Cappuccino.Error.sections.get(Cappuccino.Internal.Sections[section])[error] + " (" + Cappuccino.Internal.SectionsType + ' ' + Cappuccino.Internal.SectionsError[subError] + " - {" + line + ":" + join(column) + "}): " + message);
+    public static void printError(int section, int error, int subError, int line, String message) {
+        System.err.println('(' + Cappuccino.Name + ' ' + Cappuccino.Internal.Sections[section] + ')' + ' ' + Cappuccino.Error.sections.get(Cappuccino.Internal.Sections[section])[error] + " (" + Cappuccino.Internal.SectionsType + ' ' + Cappuccino.Internal.SectionsError[subError] + " - {" + line + "}): " + message);
         System.exit(1);
     }
 

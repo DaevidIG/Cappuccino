@@ -1,6 +1,7 @@
 package cappuccino.utils;
 
 import cappuccino.Cappuccino;
+import cappuccino.interpreter.CappuccinoInterpreter;
 import cappuccino.nodes.CappuccinoNodes.*;
 import cappuccino.scanner.Token;
 
@@ -35,37 +36,36 @@ public class CappuccinoChecker {
 			case CappuccinoReferenceTypeNode(Token value) -> {
 				if (value.type() == IdentifierToken) {
 					if (!value.value().equals("number") && NumberChecker > 0) {
-						Cappuccino.printError(2, 0, 0, value.line(), value.column(), "Number Incompatible");
+						Cappuccino.printError(2, 0, 0, value.line(), "Number Incompatible");
 					} else if (!value.value().equals("byte") && ByteChecker > 0) {
-						Cappuccino.printError(2, 0, 0, value.line(), value.column(), "Byte Incompatible");
+						Cappuccino.printError(2, 0, 0, value.line(), "Byte Incompatible");
 					} else if (!value.value().equals("short") && ShortChecker > 0) {
-						Cappuccino.printError(2, 0, 0, value.line(), value.column(), "Short Incompatible");
+						Cappuccino.printError(2, 0, 0, value.line(), "Short Incompatible");
 					} else if (!value.value().equals("integer") && IntegerChecker > 0) {
-						Cappuccino.printError(2, 0, 0, value.line(), value.column(), "Integer Incompatible");
+						Cappuccino.printError(2, 0, 0, value.line(), "Integer Incompatible");
 					} else if (!value.value().equals("long") && LongChecker > 0) {
-						Cappuccino.printError(2, 0, 0, value.line(), value.column(), "Long Incompatible");
+						Cappuccino.printError(2, 0, 0, value.line(), "Long Incompatible");
 					} else if (!value.value().equals("float") && FloatChecker > 0) {
-						Cappuccino.printError(2, 0, 0, value.line(), value.column(), "Float Incompatible");
+						Cappuccino.printError(2, 0, 0, value.line(), "Float Incompatible");
 					} else if (!value.value().equals("double") && DoubleChecker > 0) {
-						Cappuccino.printError(2, 0, 0, value.line(), value.column(), "Double Incompatible");
+						Cappuccino.printError(2, 0, 0, value.line(), "Double Incompatible");
 					}
 				} else {
-					String valueType = value.value();
-					String valueLiteral = expression.value().value();
-					if (!valueType.equals(valueLiteral) && NumberChecker > 0) {
-						Cappuccino.printError(2, 0, 0, value.line(), value.column(), "Number Literal Incompatible");
-					} else if (!valueType.equals(valueLiteral) && ByteChecker > 0) {
-						Cappuccino.printError(2, 0, 0, value.line(), value.column(), "Byte Literal Incompatible");
-					} else if (!valueType.equals(valueLiteral) && ShortChecker > 0) {
-						Cappuccino.printError(2, 0, 0, value.line(), value.column(), "Short Literal Incompatible");
-					} else if (!valueType.equals(valueLiteral) && IntegerChecker > 0) {
-						Cappuccino.printError(2, 0, 0, value.line(), value.column(), "Integer Literal Incompatible");
-					} else if (!valueType.equals(valueLiteral) && LongChecker > 0) {
-						Cappuccino.printError(2, 0, 0, value.line(), value.column(), "Long Literal Incompatible");
-					} else if (!valueType.equals(valueLiteral) && FloatChecker > 0) {
-						Cappuccino.printError(2, 0, 0, value.line(), value.column(), "Float Literal Incompatible");
-					} else if (!valueType.equals(valueLiteral) && DoubleChecker > 0) {
-						Cappuccino.printError(2, 0, 0, value.line(), value.column(), "Double Literal Incompatible");
+					String valueLiteral = CappuccinoInterpreter.evaluateNumeric(expression).toString();
+					if (!number.toString().equals(valueLiteral) && NumberChecker > 0) {
+						Cappuccino.printError(2, 0, 0, value.line(), "Number Literal Incompatible");
+					} else if (!number.toString().equals(valueLiteral) && ByteChecker > 0) {
+						Cappuccino.printError(2, 0, 0, value.line(), "Byte Literal Incompatible");
+					} else if (!number.toString().equals(valueLiteral) && ShortChecker > 0) {
+						Cappuccino.printError(2, 0, 0, value.line(), "Short Literal Incompatible");
+					} else if (!number.toString().equals(valueLiteral) && IntegerChecker > 0) {
+						Cappuccino.printError(2, 0, 0, value.line(), "Integer Literal Incompatible");
+					} else if (!number.toString().equals(valueLiteral) && LongChecker > 0) {
+						Cappuccino.printError(2, 0, 0, value.line(), "Long Literal Incompatible");
+					} else if (!number.toString().equals(valueLiteral) && FloatChecker > 0) {
+						Cappuccino.printError(2, 0, 0, value.line(), "Float Literal Incompatible");
+					} else if (!number.toString().equals(valueLiteral) && DoubleChecker > 0) {
+						Cappuccino.printError(2, 0, 0, value.line(), "Double Literal Incompatible");
 					}
 				}
 			}
@@ -81,7 +81,7 @@ public class CappuccinoChecker {
 
 				Token token = getFirstToken(unions.getFirst());
 				if (indexError == unions.size()) {
-					Cappuccino.printError(2, 0, 0, token.line(), token.column(), "Incomplete");
+					Cappuccino.printError(2, 0, 0, token.line(), "Incomplete");
 				}
 			}
 			case null, default -> {
@@ -150,17 +150,17 @@ public class CappuccinoChecker {
 	public static void checkerRange(Number number, CappuccinoLiteralExpressionNode expressionNode) {
 		if (number instanceof BigInteger decimal) {
 			if (ByteChecker > 0 && !checkIntegerRange(decimal, CappuccinoRanges.BYTE_NEGATIVE, CappuccinoRanges.BYTE_POSITIVE)) {
-				Cappuccino.printError(2, 0, 1, expressionNode.value().line(), expressionNode.value().column(), "Byte range");
+				Cappuccino.printError(2, 0, 1, expressionNode.value().line(), "Byte range");
 			} else if (ShortChecker > 0 && !checkIntegerRange(decimal, CappuccinoRanges.SHORT_NEGATIVE, CappuccinoRanges.SHORT_POSITIVE)) {
-				Cappuccino.printError(2, 0, 1, expressionNode.value().line(), expressionNode.value().column(), "Short range");
+				Cappuccino.printError(2, 0, 1, expressionNode.value().line(), "Short range");
 			} else if (IntegerChecker > 0 && !checkIntegerRange(decimal, CappuccinoRanges.INTEGER_NEGATIVE, CappuccinoRanges.INTEGER_POSITIVE)) {
-				Cappuccino.printError(2, 0, 1, expressionNode.value().line(), expressionNode.value().column(), "Integer range");
+				Cappuccino.printError(2, 0, 1, expressionNode.value().line(), "Integer range");
 			}
 		} else if (number instanceof BigDecimal decimal) {
 			if (FloatChecker > 0 && !checkDecimalRange(decimal, CappuccinoRanges.FLOAT_NEGATIVE, CappuccinoRanges.FLOAT_POSITIVE)) {
-				Cappuccino.printError(2, 0, 1, expressionNode.value().line(), expressionNode.value().column(), "Float range");
+				Cappuccino.printError(2, 0, 1, expressionNode.value().line(), "Float range");
 			} else if (DoubleChecker > 0 && !checkDecimalRange(decimal, CappuccinoRanges.DOUBLE_NEGATIVE, CappuccinoRanges.DOUBLE_POSITIVE)) {
-				Cappuccino.printError(2, 0, 1, expressionNode.value().line(), expressionNode.value().column(), "Double range");
+				Cappuccino.printError(2, 0, 1, expressionNode.value().line(), "Double range");
 			}
 		}
 	}
